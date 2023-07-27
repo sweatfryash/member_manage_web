@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:member_manage_web/main.dart';
+import 'package:member_manage_web/global/app_info.dart';
 
 class BrightnessButton extends StatefulWidget {
   const BrightnessButton({super.key});
@@ -14,7 +14,7 @@ class _BrightnessButtonState extends State<BrightnessButton> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: appBrightness,
+      valueListenable: AppInfo().appBrightness,
       builder: (context, brightness, _) {
         IconData iconData;
         if (brightness == Brightness.light) {
@@ -36,9 +36,9 @@ class _BrightnessButtonState extends State<BrightnessButton> {
           ),
           onPressed: () {
             if (brightness == Brightness.light) {
-              appBrightness.value = Brightness.dark;
+              AppInfo().appBrightness.value = Brightness.dark;
             } else {
-              appBrightness.value = Brightness.light;
+              AppInfo().appBrightness.value = Brightness.light;
             }
           },
           onHover: (bool value) {
