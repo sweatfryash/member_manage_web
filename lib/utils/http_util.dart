@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:member_manage_web/models/response_model.dart';
 import 'package:member_manage_web/utils/log_util.dart';
+import 'package:member_manage_web/utils/sp_util.dart';
 
 typedef Json = Map<String, dynamic>;
 
@@ -14,19 +15,23 @@ class HttpUtil {
   const HttpUtil._();
 
   static const String _tag = '🌐 HttpUtil';
+  static const String _tokenKey = 'token';
   static bool isLogging = true;
+  static late Dio dio;
+  static String? token;
 
-  static late final Dio dio;
-
+  static bool get hasToken => token != null && token!.isNotEmpty;
   static final BaseOptions baseOptions = BaseOptions(
     connectTimeout: const Duration(seconds: 30),
     sendTimeout: const Duration(seconds: 30),
     receiveTimeout: const Duration(seconds: 30),
     receiveDataWhenStatusError: true,
     baseUrl: 'http://localhost:8080/api',
+    responseType: ResponseType.plain,
   );
 
   static Future<void> init() async {
+    token = SPUtil.getString(_tokenKey);
     dio = Dio()
       ..options = baseOptions
       ..interceptors.addAll([_interceptor]);
@@ -186,6 +191,9 @@ class HttpUtil {
   static QueuedInterceptorsWrapper get _interceptor {
     return QueuedInterceptorsWrapper(
       onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
+        if (hasToken) {
+          options.headers[_tokenKey] = token;
+        }
         _log('Fetching(${options.method}) url: ${options.uri}');
         if (options.headers.isNotEmpty) {
           _log('Raw request headers: ${options.headers}');
@@ -196,9 +204,12 @@ class HttpUtil {
         handler.next(options);
       },
       onResponse: (Response<dynamic> res, ResponseInterceptorHandler handler) {
-        _log(
-          'Got response from: ${res.requestOptions.uri} ${res.statusCode}',
-        );
+        final resToken = res.headers[_tokenKey]?.first;
+        if (resToken != null) {
+          token = resToken;
+          SPUtil.setString(_tokenKey, token!);
+        }
+        _log('Got response from: ${res.requestOptions.uri} ${res.statusCode}');
         _log('Raw response body: ${res.data}');
         dynamic resolvedData;
         if (res.statusCode == HttpStatus.noContent) {

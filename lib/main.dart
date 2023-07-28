@@ -3,13 +3,13 @@ import 'package:member_manage_web/global/app_info.dart';
 import 'package:member_manage_web/pages/home/home_page.dart';
 import 'package:member_manage_web/pages/login/login_page.dart';
 import 'package:go_router/go_router.dart';
-import 'package:member_manage_web/utils/http_util.dart';
+import 'package:member_manage_web/pages/splash/splash_page.dart';
 
 final _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const LoginPage(),
+      builder: (context, state) => const SplashPage(),
     ),
     GoRoute(
       path: '/home',
@@ -23,9 +23,6 @@ final _router = GoRouter(
 );
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  HttpUtil.init();
-
   runApp(const MyApp());
 }
 
@@ -39,7 +36,7 @@ class MyApp extends StatelessWidget {
       valueListenable: AppInfo().appBrightness,
       builder: (BuildContext context, Brightness brightness, _) {
         return MaterialApp.router(
-          title: '管理系统',
+          title: '会员管理',
           routerConfig: _router,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
