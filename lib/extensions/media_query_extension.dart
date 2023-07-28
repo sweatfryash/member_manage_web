@@ -13,4 +13,6 @@ extension MediaQueryExtension on MediaQueryData {
   }
 
   bool get isCompact => windowType == WindowType.compact;
+
+  bool get isMedium => windowType == WindowType.medium;
 }

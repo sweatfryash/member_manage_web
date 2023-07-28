@@ -13,4 +13,12 @@ class UserAPI {
       dataConverter: (dynamic data) => data,
     );
   }
+
+  static Future logout() {
+    return HttpUtil.fetch(
+      FetchType.post,
+      url: '$_api/logout',
+      dataConverter: (dynamic data) => data,
+    );
+  }
 }

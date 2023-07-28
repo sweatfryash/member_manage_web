@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:member_manage_web/apis/user_api.dart';
-import 'package:member_manage_web/utils/log_util.dart';
+import 'package:member_manage_web/extensions/context_extension.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,6 +13,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final passwordVisible = ValueNotifier<bool>(true);
 
   Future<void> onLoginTap(BuildContext context) async {
     final username = usernameController.text;
@@ -50,14 +51,37 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              TextField(
-                controller: passwordController,
-                decoration: const InputDecoration(
-                  isDense: true,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(99))),
-                  labelText: '密码',
-                ),
+              ValueListenableBuilder<bool>(
+                valueListenable: passwordVisible,
+                builder: (context, bool value, _) {
+                  return TextField(
+                    obscureText: value,
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(99))),
+                      labelText: '密码',
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          passwordVisible.value = !value;
+                        },
+                        child: AnimatedSwitcher(
+                          duration: kThemeChangeDuration,
+                          child: Icon(
+                            value
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                            color: value
+                                ? context.colorScheme.onSurface
+                                : context.colorScheme.primary,
+                            key: ValueKey<bool>(value),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
               const Spacer(),
               ListenableBuilder(

@@ -37,6 +37,11 @@ class HttpUtil {
       ..interceptors.addAll([_interceptor]);
   }
 
+  static onLogout(){
+    token = null;
+    SPUtil.remove(_tokenKey);
+  }
+
   static ResponseModel _successModel() =>
       ResponseModel(code: 0, message: 'success');
 
