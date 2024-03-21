@@ -81,17 +81,15 @@ class _HomePageState extends State<HomePage> {
     return ValueListenableBuilder(
       valueListenable: selectedPageIndex,
       builder: (context, index, _) {
-        return BottomNavigationBar(
-          currentIndex: index,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: context.colorScheme.primary,
-          onTap: onNavigationChanged,
-          items: navigationIcons
+        return NavigationBar(
+          selectedIndex: index,
+          onDestinationSelected: onNavigationChanged,
+          destinations: navigationIcons
               .map(
-                (item) => BottomNavigationBarItem(
+                (item) => NavigationDestination(
                   label: item.label,
                   icon: Icon(item.icon),
-                  activeIcon: Icon(item.selectedIcon),
+                  selectedIcon: Icon(item.selectedIcon),
                 ),
               )
               .toList(),
